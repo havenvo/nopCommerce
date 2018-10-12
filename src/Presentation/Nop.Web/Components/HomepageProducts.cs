@@ -33,8 +33,6 @@ namespace Nop.Web.Components
                 .Where(p => _aclService.Authorize(p) && _storeMappingService.Authorize(p))
                 //availability dates
                 .Where(p => _productService.ProductIsAvailable(p))
-                //product visibility
-                .Where(p => p.VisibleIndividually)
                 .ToList();
 
             if (!products.Any())
