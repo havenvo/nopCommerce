@@ -230,14 +230,8 @@ GO
 ALTER TABLE [Topic] ALTER COLUMN [Title] nvarchar(max) NOT NULL
 GO
 
-USE [nopdb_lite]
-GO
-/****** Object:  StoredProcedure [dbo].[ProductLoadAllPaged]    Script Date: 10/12/2018 8:18:28 AM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-ALTER PROCEDURE [dbo].[ProductLoadAllPaged]
+-- update the "ProductLoadAllPaged" stored procedure
+ALTER PROCEDURE [ProductLoadAllPaged]
 (
 	@CategoryIds		nvarchar(MAX) = null,	--a list of category IDs (comma-separated list). e.g. 1,2,3
 	@ManufacturerId		int = 0,
@@ -643,7 +637,7 @@ BEGIN
 		AND p.VisibleIndividually = 1'
 	END
 
-	--filter by "is associated"
+	--filter by "ParentGroupedProductId"
 	IF @ParentGroupedProductId is not null
 	BEGIN
 		SET @sql = @sql + '
