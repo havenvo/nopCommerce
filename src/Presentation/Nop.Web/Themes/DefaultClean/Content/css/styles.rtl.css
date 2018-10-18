@@ -1482,9 +1482,14 @@ label, label + * {
 	margin: 0 0 10px;
 }
 .item-box .rating {
-	background: url('../images/rating1.png') repeat-x;
-	width: 95px;
+    background: url('../images/rating1.png') repeat-x;
+    width: 95px;
     height: 14px;
+
+    display: flex;
+    flex-flow: row nowrap;
+
+    justify-content: flex-end;
 }
 .item-box .rating div {
 	background: url('../images/rating2.png') repeat-x;
