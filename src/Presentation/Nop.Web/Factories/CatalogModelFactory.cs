@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.WebUtilities;
 using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Domain.Blogs;
@@ -163,14 +165,20 @@ namespace Nop.Web.Factories
             pagingFilteringModel.AllowProductSorting = true;
             command.OrderBy = pagingFilteringModel.OrderBy ?? orderedActiveSortingOptions.FirstOrDefault().Id;
 
+            //remove doubled get params from query to avoid type errors like a=true&a=false -> a=true,false, first of all for checkboxes
+            var currentPageUrl = new UriBuilder(_webHelper.GetThisPageUrl(true));
+            var prs = QueryHelpers.ParseQuery(currentPageUrl.Query)
+                .ToDictionary(parameter => parameter.Key,
+                    parameter => parameter.Value.FirstOrDefault()?.ToString() ?? string.Empty);
+            currentPageUrl.Query = new QueryBuilder(prs).ToQueryString().ToString();
+
             //prepare available model sorting options
-            var currentPageUrl = _webHelper.GetThisPageUrl(true);
             foreach (var option in orderedActiveSortingOptions)
             {
                 pagingFilteringModel.AvailableSortOptions.Add(new SelectListItem
                 {
                     Text = _localizationService.GetLocalizedEnum((ProductSortingEnum)option.Id),
-                    Value = _webHelper.ModifyQueryString(currentPageUrl, "orderby", option.Id.ToString()),
+                    Value = _webHelper.ModifyQueryString(currentPageUrl.ToString(), "orderby", option.Id.ToString()),
                     Selected = option.Id == command.OrderBy
                 });
             }
